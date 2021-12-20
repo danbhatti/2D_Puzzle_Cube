@@ -1,0 +1,733 @@
+import numpy as np
+
+
+# Deliverables
+# Need function that allows user to input pieces
+# Need to do this for a 3x3, 4x4, 5x5 grid
+# Need a rotation function that will rotate the pieces
+# Need a shift function that will rotate the pieces
+# Need an add function that adds the pieces
+# Need to valid piece checker function
+# Need to print the max amount of combos
+# Symmetry checker
+
+
+Configs: list = [[], [], [], []]  # list to hold configurations of 4 pieces
+uniques: list = [[], [], [], []]  # list to hold unique configurations of 4 pieces
+
+
+def input_piece():
+    """
+    This input piece function takes in input from the user of how they want their puzzle piece to look like. The user
+    will input zeroes and ones into the matrix and in return get their desired puzzle piece that will be added later on
+    in the program
+    :return: This function returns the desired puzzle piece (which is a matrix)
+    """
+    matrix = []  # Making the list that the matrix will be in
+    print("Type the entries row-wise:")
+    # For user input
+    for i in range(R):  # A for loop for row entries
+        a = []
+        for j in range(C):  # A for loop for column entries
+            input_string = ""
+            while input_string != '0' and input_string != '1':  # With this, the user can only input a 0 or 1 into
+                # the input piece input
+                input_string = input()
+            current_integer = int(input_string)
+            a.append(current_integer)
+        matrix.append(a)  # Appending the blank matrix to put the users inputted 'piece' into it
+    # For printing the matrix
+    for i in range(R):
+        for j in range(C):
+            print(matrix[i][j], end=" ")  # This prints the matrix to the user
+        print()
+    return matrix
+
+
+def three_by_three_valid_piece_checker(matrix: list) -> bool:
+    """
+    This function checks to see if the user inputted a valid piece. For a piece to be valid, a one needs to be either
+    above, below, to the left or to the right of another value of 1. If there is no one surrounding it, this represents
+    a floating block which isn't possible and will therefore tell the user it is an invalid piece
+    :param matrix: The matrix or list of lists must have integers (0 or 1)
+    :return: A boolean which states if the inputted piece is valid or invalid
+    """
+    zero_element = matrix[0][
+        0]  # These variables all represent one element in the matrix. We go row by row for the indexing
+    one_element = matrix[0][1]
+    two_element = matrix[0][2]
+    three_element = matrix[1][0]
+    four_element = matrix[1][1]
+    five_element = matrix[1][2]
+    six_element = matrix[2][0]
+    seven_element = matrix[2][1]
+    eight_element = matrix[2][2]
+    if zero_element == 1 and (
+            one_element != 1 and three_element != 1):  # If the first element is one and its surrounding elements
+        # don't contain a one, this is an invalid piece and return false
+        return False
+    elif one_element == 1 and (zero_element != 1 and two_element != 1 and four_element != 1):  # All of these are the same and we are
+        # just checking each element
+        return False
+    elif two_element == 1 and (one_element != 1 and five_element != 1):
+        return False
+    elif three_element == 1 and (zero_element != 1 and four_element != 1 and six_element != 1):
+        return False
+    elif four_element == 1 and (one_element != 1 and three_element != 1 and five_element != 1 and seven_element != 1):
+        return False
+    elif five_element == 1 and (two_element != 1 and four_element != 1 and eight_element != 1):
+        return False
+    elif six_element == 1 and (three_element != 1 and seven_element != 1):
+        return False
+    elif seven_element == 1 and (four_element != 1 and six_element != 1 and eight_element != 1):
+        return False
+    elif eight_element == 1 and (five_element != 1 and seven_element != 1):
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 0 and four_element == 0 \
+            and five_element == 0 and six_element == 1 and seven_element == 1 and eight_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 0 and two_element == 1 and three_element == 1 and four_element == 0 \
+            and five_element == 1 and six_element == 1 and seven_element == 0 and eight_element == 1:
+        return False
+    else:
+        return True  # If it satisfies the condition it should return true
+
+
+def four_by_four_valid_piece_checker(matrix: list) -> bool:
+    """
+    This function checks to see if the user inputted a valid piece. For a piece to be valid, a one needs to be either
+    above, below, to the left or to the right of another value of 1. If there is no one surrounding it, this represents
+    a floating block which isn't possible and will therefore tell the user it is an invalid piece
+    :param matrix: The matrix or list of lists must have integers (0 or 1)
+    :return: A boolean which states if the inputted piece is valid or invalid
+    """
+    zero_element = matrix[0][0]  # These variables all represent one element in the matrix. We go row by row for the
+    # indexing
+    one_element = matrix[0][1]
+    two_element = matrix[0][2]
+    three_element = matrix[0][3]
+    four_element = matrix[1][0]
+    five_element = matrix[1][1]
+    six_element = matrix[1][2]
+    seven_element = matrix[1][3]
+    eight_element = matrix[2][0]
+    nine_element = matrix[2][1]
+    ten_element = matrix[2][2]
+    eleven_element = matrix[2][3]
+    twelve_element = matrix[3][0]
+    thirteen_element = matrix[3][1]
+    fourteen_element = matrix[3][2]
+    fifteen_element = matrix[3][3]
+    if zero_element == 1 and (one_element != 1 and four_element != 1):  # If the first element is one and its
+        # surrounding elements don't contain a one, this is an invalid piece and return false
+        return False
+    elif one_element == 1 and (zero_element != 1 and two_element != 1 and five_element != 1):  # All of these are the
+        # same and we are just checking each element
+        return False
+    elif two_element == 1 and (one_element != 1 and three_element != 1 and six_element != 1):
+        return False
+    elif three_element == 1 and (two_element != 1 and seven_element != 1):
+        return False
+    elif four_element == 1 and (zero_element != 1 and five_element != 1 and eight_element != 1):
+        return False
+    elif five_element == 1 and (one_element != 1 and four_element != 1 and six_element != 1 and nine_element != 1):
+        return False
+    elif six_element == 1 and (two_element != 1 and five_element != 1 and seven_element != 1 and ten_element != 1):
+        return False
+    elif seven_element == 1 and (three_element != 1 and six_element != 1 and eleven_element != 1):
+        return False
+    elif eight_element == 1 and (four_element != 1 and nine_element != 1 and twelve_element != 1):
+        return False
+    elif nine_element == 1 and (
+            five_element != 1 and eight_element != 1 and ten_element != 1 and thirteen_element != 1):
+        return False
+    elif ten_element == 1 and (
+            six_element != 1 and nine_element != 1 and eleven_element != 1 and fourteen_element != 1):
+        return False
+    elif eleven_element == 1 and (seven_element != 1 and ten_element != 1 and fifteen_element != 1):
+        return False
+    elif twelve_element == 1 and (eight_element != 1 and thirteen_element != 1):
+        return False
+    elif thirteen_element == 1 and (nine_element != 1 and twelve_element != 1 and fourteen_element != 1):
+        return False
+    elif fourteen_element == 1 and (ten_element != 1 and thirteen_element != 1 and fifteen_element != 1):
+        return False
+    elif fifteen_element == 1 and (eleven_element != 1 and fourteen_element != 1):
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 0 \
+            and five_element == 0 and six_element == 0 and seven_element == 0 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 0 \
+            and nine_element == 0 and ten_element == 0 and eleven_element == 0 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 0 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 0 and six_element == 1 and seven_element == 1 and eight_element == 1 \
+            and nine_element == 0 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 0 and fourteen_element == 1 and fifteen_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 0 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 0 and seven_element == 1 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 0 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 0 and fifteen_element == 1:
+        return False
+    else:
+        return True  # if it satisfies the condition it should return true
+
+
+def five_by_five_valid_piece_checker(matrix: list) -> bool:
+    """
+    This function checks to see if the user inputted a valid piece. For a piece to be valid, a one needs to be either
+    above, below, to the left or to the right of another value of 1. If there is no one surrounding it, this represents
+    a floating block which isn't possible and will therefore tell the user it is an invalid piece
+    :param matrix: The matrix or list of lists must have integers (0 or 1)
+    :return: A boolean which states if the inputted piece is valid or invalid
+    """
+    zero_element = matrix[0][0]  # These variables all represent one element in the matrix. We go row by row for the
+    # indexing
+    one_element = matrix[0][1]
+    two_element = matrix[0][2]
+    three_element = matrix[0][3]
+    four_element = matrix[0][4]
+    five_element = matrix[1][0]
+    six_element = matrix[1][1]
+    seven_element = matrix[1][2]
+    eight_element = matrix[1][3]
+    nine_element = matrix[1][4]
+    ten_element = matrix[2][0]
+    eleven_element = matrix[2][1]
+    twelve_element = matrix[2][2]
+    thirteen_element = matrix[2][3]
+    fourteen_element = matrix[2][4]
+    fifteen_element = matrix[3][0]
+    sixteen_element = matrix[3][1]
+    seventeen_element = matrix[3][2]
+    eighteen_element = matrix[3][3]
+    nineteen_element = matrix[3][4]
+    twenty_element = matrix[4][0]
+    twentyone_element = matrix[4][1]
+    twentytwo_element = matrix[4][2]
+    twentythree_element = matrix[4][3]
+    twentyfour_element = matrix[4][4]
+    if zero_element == 1 and (one_element != 1 and five_element != 1):  # If the first element is one and its
+        # surrounding elements don't contain a one, this is an invalid piece and return false
+        return False
+    elif one_element == 1 and (zero_element != 1 and two_element != 1 and six_element != 1):  # All of these are the
+        # same and we are just checking each element
+        return False
+    elif two_element == 1 and (one_element != 1 and three_element != 1 and seven_element != 1):
+        return False
+    elif three_element == 1 and (two_element != 1 and four_element != 1 and eight_element != 1):
+        return False
+    elif four_element == 1 and (three_element != 1 and nine_element != 1):
+        return False
+    elif five_element == 1 and (zero_element != 1 and six_element != 1 and ten_element != 1):
+        return False
+    elif six_element == 1 and (one_element != 1 and five_element != 1 and seven_element != 1 and eleven_element != 1):
+        return False
+    elif seven_element == 1 and (two_element != 1 and six_element != 1 and eight_element != 1 and twelve_element != 1):
+        return False
+    elif eight_element == 1 and (three_element != 1 and seven_element != 1 and nine_element != 1
+                                 and thirteen_element != 1):
+        return False
+    elif nine_element == 1 and (four_element != 1 and eight_element != 1 and fourteen_element != 1):
+        return False
+    elif ten_element == 1 and (five_element != 1 and eleven_element != 1 and fifteen_element != 1):
+        return False
+    elif eleven_element == 1 and (six_element != 1 and ten_element != 1 and twelve_element != 1
+                                  and sixteen_element != 1):
+        return False
+    elif twelve_element == 1 and (seven_element != 1 and eleven_element != 1 and thirteen_element != 1
+                                  and seventeen_element != 1):
+        return False
+    elif thirteen_element == 1 and (eight_element != 1 and twelve_element != 1 and fourteen_element != 1
+                                    and eighteen_element != 1):
+        return False
+    elif fourteen_element == 1 and (nine_element != 1 and thirteen_element != 1 and nineteen_element != 1):
+        return False
+    elif fifteen_element == 1 and (ten_element != 1 and sixteen_element != 1 and twenty_element != 1):
+        return False
+    elif sixteen_element == 1 and (eleven_element != 1 and fifteen_element != 1 and seventeen_element != 1
+                                   and twentyone_element != 1):
+        return False
+    elif seventeen_element == 1 and (twelve_element != 1 and sixteen_element != 1 and eighteen_element != 1
+                                     and twentytwo_element != 1):
+        return False
+    elif eighteen_element == 1 and (thirteen_element != 1 and seventeen_element != 1 and nineteen_element != 1
+                                    and twentythree_element != 1):
+        return False
+    elif nineteen_element == 1 and (fourteen_element != 1 and eighteen_element != 1 and twentyfour_element != 1):
+        return False
+    elif twenty_element == 1 and (fifteen_element != 1 and twentyone_element != 1):
+        return False
+    elif twentyone_element == 1 and (sixteen_element != 1 and twenty_element != 1 and twentytwo_element != 1):
+        return False
+    elif twentytwo_element == 1 and (seventeen_element != 1 and twentyone_element != 1 and twentythree_element != 1):
+        return False
+    elif twentythree_element == 1 and (eighteen_element != 1 and twentytwo_element != 1 and twentyfour_element != 1):
+        return False
+    elif twentyfour_element == 1 and (nineteen_element != 1 and twentythree_element != 1):
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 0 and six_element == 0 and seven_element == 0 and eight_element == 0 \
+            and nine_element == 0 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1 and sixteen_element == 1 \
+            and seventeen_element == 1 and eighteen_element == 1 and nineteen_element == 1 and twenty_element == 1 \
+            and twentyone_element == 1 and twentytwo_element == 1 and twentythree_element == 1 \
+            and twentyfour_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 0 and eleven_element == 0 and twelve_element == 0 \
+            and thirteen_element == 0 and fourteen_element == 0 and fifteen_element == 1 and sixteen_element == 1 \
+            and seventeen_element == 1 and eighteen_element == 1 and nineteen_element == 1 and twenty_element == 1 \
+            and twentyone_element == 1 and twentytwo_element == 1 and twentythree_element == 1 \
+            and twentyfour_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 0 and sixteen_element == 0 \
+            and seventeen_element == 0 and eighteen_element == 0 and nineteen_element == 0 and twenty_element == 1 \
+            and twentyone_element == 1 and twentytwo_element == 1 and twentythree_element == 1 \
+            and twentyfour_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 0 and two_element == 1 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 0 and seven_element == 1 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 1 and eleven_element == 0 and twelve_element == 1 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1 and sixteen_element == 0 \
+            and seventeen_element == 1 and eighteen_element == 1 and nineteen_element == 1 and twenty_element == 1 \
+            and twentyone_element == 0 and twentytwo_element == 1 and twentythree_element == 1 \
+            and twentyfour_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 0 and three_element == 1 and four_element == 1 \
+            and five_element == 1 and six_element == 1 and seven_element == 0 and eight_element == 1 \
+            and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 0 \
+            and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1 and sixteen_element == 1 \
+            and seventeen_element == 0 and eighteen_element == 1 and nineteen_element == 1 and twenty_element == 1 \
+            and twentyone_element == 1 and twentytwo_element == 0 and twentythree_element == 1 \
+            and twentyfour_element == 1:
+        return False
+    elif zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 0 and four_element == 1 \
+            and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 0 \
+            and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+            and thirteen_element == 0 and fourteen_element == 1 and fifteen_element == 1 and sixteen_element == 1 \
+            and seventeen_element == 1 and eighteen_element == 0 and nineteen_element == 1 and twenty_element == 1 \
+            and twentyone_element == 1 and twentytwo_element == 1 and twentythree_element == 0 \
+            and twentyfour_element == 1:
+        return False
+    else:
+        return True  # if it satisfies the condition it should return true
+
+
+choice = input('What grid would you like to use? \n'
+               'Enter 1 for a 3 x 3 grid, 2 for a 4 x 4 grid, and 3 for a 5 x 5 grid: ')  # This user input has the
+# user choose the grid that they would like
+piece_list = []  # Initializing the list, holds user inputs, each additional user input a sublist
+
+
+if choice == '1':
+    print('Your grid is: \n', (np.zeros((3, 3))))  # Creates an empty grid which shows the user how big their grid is
+    R = 3  # These are necessary for input piece to signify how big the matrix should be for the user input
+    C = 3
+    print("Enter 4 pieces. Enter a 1 if you want a block there and a 0 if you don't")
+    while True:
+        piece = input_piece()  # Where the input piece function from above is implemented
+        if not three_by_three_valid_piece_checker(piece):  # Where the piece checker is implemented
+            print("You have entered an invalid piece; not all the squares connect. Please try again")
+            continue  # Go back to input piece again if an invalid piece was inputted
+        if piece in piece_list:
+            print(
+                "The piece you have inputted is already in the list.")  # If the user tried to input a duplicate
+            # entry, tell the user
+            continue  # Go back to input piece again if an invalid piece was inputted
+        third_choice = input("Do you want to add this to your list of pieces. Type yes or no:")
+        if third_choice == 'yes':
+            print("Piece has been added to the list of pieces")
+            piece_list.append(piece)  # Adds the inputted piece to the list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+        if third_choice == 'no':
+            print("This piece has not been added to the list of pieces")  # Doesn't add piece to piece list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+
+
+if choice == '2':
+    print('Your grid is: \n', (np.zeros((4, 4))))  # Creates an empty grid which shows the user how big their grid is
+    R = 4  # These are necessary for input piece to signify how big the matrix should be for the user input
+    C = 4
+    print("Enter 4 pieces. Enter a 1 if you want a block there and a 0 if you don't")
+    while True:
+        piece = input_piece()  # Where the input piece function from above is implemented
+        if not four_by_four_valid_piece_checker(piece):  # Where the piece checker is implemented
+            print("You have entered an invalid piece; not all the squares connect. Please try again")
+            continue  # Go back to input piece again if an invalid piece was inputted
+        if piece in piece_list:
+            print(
+                "The piece you have inputted is already in the list.")  # If the user tried to input a duplicate
+            # entry, tell the user
+            continue  # Go back to input piece again if an invalid piece was inputted
+        third_choice = input("Do you want to add this to your list of pieces. Type yes or no:")
+        if third_choice == 'yes':
+            print("Piece has been added to the list of pieces")
+            piece_list.append(piece)  # Adds the inputted piece to the list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+        if third_choice == 'no':
+            print("This piece has not been added to the list of pieces")  # Doesn't add piece to piece list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+
+
+if choice == '3':
+    print('Your grid is: \n', (np.zeros((5, 5))))  # Creates an empty grid which shows the user how big their grid is
+    R = 5  # These are necessary for input piece to signify how big the matrix should be for the user input
+    C = 5
+    print("Enter 4 pieces. Enter a 1 if you want a block there and a 0 if you don't")
+    while True:
+        piece = input_piece()  # Where the input piece function from above is implemented
+        if not five_by_five_valid_piece_checker(piece):  # Where the piece checker is implemented
+            print("You have entered an invalid piece; not all the squares connect. Please try again")
+            continue  # Go back to input piece again if an invalid piece was inputted
+        if piece in piece_list:
+            print(
+                "The piece you have inputted is already in the list.")  # If the user tried to input a duplicate
+            # entry, tell the user
+            continue  # Go back to input piece again if an invalid piece was inputted
+        third_choice = input("Do you want to add this to your list of pieces. Type yes or no:")
+        if third_choice == 'yes':
+            print("Piece has been added to the list of pieces")
+            piece_list.append(piece)  # Adds the inputted piece to the list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+        if third_choice == 'no':
+            print("This piece has not been added to the list of pieces")  # Doesn't add piece to piece list
+            fourth_choice = input('Do you want to add another piece?. If you have entered four pieces please type no:')
+            if fourth_choice == 'yes':
+                print("You will now be directed to entering another entry")  # Will restart the loop for the user
+            if fourth_choice == 'no':
+                break  # Breaks out of the loop
+            third_choice = ''
+
+
+def rot_piece():
+    """
+    This function will rotate every piece in piece list three times so that all 360 degrees are covered as
+    possible piece configurations that will be used later in the program. These configurations are put into a new list
+    named configs
+    """
+    for k in range(len(piece_list)):  # k is the index for piece # k+1
+        Configs[k].append(np.array(piece_list[k]))  # Input all of the pieces in piece list into configs
+        Configs[k].append(np.array(np.rot90(piece_list[k])))  # The next three lines of code will put all of the
+        Configs[k].append(np.array(np.rot90(np.rot90(piece_list[k]))))  # possible rotations of each piece in piece
+        # list into the configs list
+        Configs[k].append(np.array(np.rot90(np.rot90(np.rot90(piece_list[k])))))
+
+
+def shift_piece_right():
+    """
+    This function will rotate every piece from piece list to the right zero, once or twice depending on how many times
+    it can shift. All of these possible shifts will go into the configs list along with the rotations
+    """
+    for k in range(len(piece_list)):  # k is the index for piece # k+1
+        index: int = 0  # holds the right-most col. index containing a '1' (row does not matter)
+        for row in range(R):  # indexes us through the rows
+            for col in range(C):  # indexes us through the columns
+                if piece_list[k][row][col] == 1 and col > index:  # increase the right-most col index if its greater
+                    # than the current
+                    index = col
+        if index == 0:  # shift right twice if right-most col index is 0
+            Configs[k].append(np.array(np.roll(piece_list[k], 1, axis=1)))
+            Configs[k].append(np.array(np.roll(piece_list[k], 2, axis=1)))
+        elif index == 1:  # shift right once if right-most col index is 1
+            Configs[k].append(np.array(np.roll(piece_list[k], 1, axis=1)))
+        else:
+            break
+
+
+def shift_piece_left():
+    """
+    This function will rotate every piece from piece list to the left zero, once or twice depending on how many times
+    it can shift. All of these possible shifts will go into the configs list along with the rotations
+    """
+    for k in range(len(piece_list)):  # k is the index for piece # k+1
+        index: int = 0  # holds the left-most col. index containing a '1' (row does not matter)
+        for row in range(R):  # indexes us through the rows
+            for col in range(C):  # indexes us through the columns
+                if piece_list[k][row][col] == 1 and col < index:  # decrease the left-most col index if its less than
+                    # the current
+                    index = col
+        if index == 2:  # shift left twice if left-most col index is 2
+            Configs[k].append(np.array(np.roll(piece_list[k], -1, axis=1)))
+            Configs[k].append(np.array(np.roll(piece_list[k], -2, axis=1)))
+        elif index == 1:  # shift left once if left-most col index is 1
+            Configs[k].append(np.array(np.roll(piece_list[k], -1, axis=1)))
+        else:
+            break
+
+
+def shift_piece_up():
+    """
+    This function will rotate every piece from piece list to up zero, once or twice depending on how many times
+    it can shift. All of these possible shifts will go into the configs list along with the rotations
+    """
+    for k in range(len(piece_list)):  # k is the index for piece # k+1
+        index: int = 0  # holds the up-most row index containing a '1' (col does not matter)
+        for row in range(R):  # indexes us through the rows
+            for col in range(C):  # indexes us through the columns
+                if piece_list[k][row][col] == 1 and row > index:  # increase the up most row index if its greater than
+                    # the current
+                    index = col
+        if index == 0:  # shift up twice if up-most row index is 0
+            Configs[k].append(np.array(np.roll(piece_list[k], 1, axis=0)))
+            Configs[k].append(np.array(np.roll(piece_list[k], 2, axis=0)))
+        elif index == 1:  # shift up once if up-most row index is 1
+            Configs[k].append(np.array(np.roll(piece_list[k], 1, axis=0)))
+        else:
+            break
+
+
+def shift_piece_down():
+    """
+    This function will rotate every piece from piece list to the down zero, once or twice depending on how many times
+    it can shift. All of these possible shifts will go into the configs list along with the rotations
+    """
+    for k in range(len(piece_list)):  # k is the index for piece # k+1
+        index: int = 0  # holds the down-most row index containing a '1' (col does not matter)
+        for row in range(R):  # indexes us through the rows
+            for col in range(C):  # indexes us through the cols
+                if piece_list[k][row][col] == 1 and row < index:  # decrease the down most row index if its less than
+                    # the current
+                    index = col
+        if index == 2:  # shift down twice if down-most row index is 2
+            Configs.append(np.array(np.roll(piece_list[k], -1, axis=0)))
+            Configs.append(np.array(np.roll(piece_list[k], -2, axis=0)))
+        elif index == 1:  # shift down once if down-most row index is 1
+            Configs.append(np.array(np.roll(piece_list[k], 1, axis=0)))
+        else:
+            break
+
+
+def check_duplicate_configurations(k: int):
+    """
+    This function checks if the configs list has any duplicate entries. This can happen due to the fact that each piece
+    is being rotated and shifted and this could cause a same piece to be created. For example one shift right could
+    two rotations. Therefore, to ensure we are getting unique solutions duplicates are erased
+    :param: k, the index of piece k+1
+    :return: uniques; Only unique configurations so that no duplicates are in the list
+    """
+    for configuration in Configs[k]:  # index through the sublist, Configs[k]
+        in_list: bool = False
+        for unique_config in uniques[k]:  # index through the associated sublist, uniques[k]; the purpose of this
+            # for-loop is to check whether configuration is in uniques[k]
+            if (configuration == unique_config).all():
+                in_list = True
+                break
+        if in_list is False:  # we only want to add configuration to uniques[k] if it's not already in uniques[k]
+            uniques[k].append(configuration)
+    return uniques
+
+
+Possible_Solutions: list = []  # add_pieces() will add all possible combinations of pieces 1, 2, 3, 4 to this list
+
+
+def add_pieces():
+    """
+    This function will add every combination of the four lists into unique matrices that will be used in the find
+    solutions function below. If the user does not have four pieces, this will for for 3,2 or 1 piece as well
+    """
+    l1 = uniques[0]
+    l2 = uniques[1]
+    l3 = uniques[2]
+    l4 = uniques[3]
+    for w in range(len(l1)):
+        if l2 == []:  # if l2 is empty, we know the user has only entered one piece, so l3, l4 are empty as well. we
+            # only have to consider transformations applied to piece1 as possible solutions (won't be any solutions
+            # unless user entered a matrix of ones)
+            Possible_Solutions.append(l1[w])
+        else:
+            for x in range(len(l2)):
+                if l3 == []:  # if l3 is empty, we know the user has only entered two pieces, so l4 is empty as well.
+                    # we have to add all configurations of piece1 to all configurations of piece2, then append those
+                    # 'sums' to Possible_Solutions()
+                    Possible_Solutions.append(l1[w] + l2[x])
+                else:
+                    for y in range(len(l3)):
+                        if l4 == []:  # if l4 is empty, we know the user has only entered three pieces; we have to add
+                            # all configurations of piece1 to all configurations of piece2 and piece3, then append
+                            # those 'sums' to Possible_Solutions()
+                            Possible_Solutions.append(l1[w] + l2[x] + l3[y])
+                        else:  # we have to add all configurations of piece1 to all configurations of piece2, piece3,
+                            # and piece4, then append those 'sums' to Possible_Solutions()
+                            for z in range(len(l4)):
+                                Possible_Solutions.append(l1[w] + l2[x] + l3[y] + l4[z])
+
+
+True_Solutions: list = []  # find_solutions() will add all valid squares (matrix of one's) to True_Solutions
+
+
+def three_find_solutions():
+    """
+    This function will find all of the possible solutions to the addition that just previously occurred. For it to
+    count as a solution, all of the elements within the matrix should be a one. If they are not, then it isn't a
+    solution
+    :return: A number of the unique solutions
+    """
+    for v in range(len(Possible_Solutions)):
+        zero_element = Possible_Solutions[v][0][0] #Indexing the elements that will be used for the solutions
+        one_element = Possible_Solutions[v][0][1]
+        two_element = Possible_Solutions[v][0][2]
+        three_element = Possible_Solutions[v][1][0]
+        four_element = Possible_Solutions[v][1][1]
+        five_element = Possible_Solutions[v][1][2]
+        six_element = Possible_Solutions[v][2][0]
+        seven_element = Possible_Solutions[v][2][1]
+        eight_element = Possible_Solutions[v][2][2]
+        if zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+                and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 1:  # all
+            # solutions look like a matrix of ones
+            True_Solutions.append(Possible_Solutions[v])
+    print("The number of unique solutions is ", len(True_Solutions))
+
+
+def four_find_solutions():
+    """
+    This function will find all of the possible solutions to the addition that just previously occurred. For it to
+    count as a solution, all of the elements within the matrix should be a one. If they are not, then it isn't a
+    solution
+    :return: A number of the unique solutions
+    """
+    for v in range(len(Possible_Solutions)):
+        zero_element = Possible_Solutions[v][0][0] #Indexing the elements that will be used for the solutions
+        one_element = Possible_Solutions[v][0][1]
+        two_element = Possible_Solutions[v][0][2]
+        three_element = Possible_Solutions[v][0][3]
+        four_element = Possible_Solutions[v][1][0]
+        five_element = Possible_Solutions[v][1][1]
+        six_element = Possible_Solutions[v][1][2]
+        seven_element = Possible_Solutions[v][1][3]
+        eight_element = Possible_Solutions[v][2][0]
+        nine_element = Possible_Solutions[v][2][1]
+        ten_element = Possible_Solutions[v][2][2]
+        eleven_element = Possible_Solutions[v][2][3]
+        twelve_element = Possible_Solutions[v][3][0]
+        thirteen_element = Possible_Solutions[v][3][1]
+        fourteen_element = Possible_Solutions[v][3][2]
+        fifteen_element = Possible_Solutions[v][3][3]
+        if zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+                and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 1 \
+                and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+                and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1:  # all solutions look
+            # like a matrix of ones
+            True_Solutions.append(Possible_Solutions[v])
+    print("The number of unique solutions is ", len(True_Solutions))
+
+
+def five_find_solutions():
+    """
+    This function will find all of the possible solutions to the addition that just previously occurred. For it to
+    count as a solution, all of the elements within the matrix should be a one. If they are not, then it isn't a
+    solution
+    :return: A number of the unique solutions
+    """
+    for v in range(len(Possible_Solutions)):
+        zero_element = Possible_Solutions[v][0][0]  # These variables all represent one element in the matrix. We go
+        # row by row for the indexing
+        one_element = Possible_Solutions[v][0][1]
+        two_element = Possible_Solutions[v][0][2]#Indexing the elements that will be used for the solutions
+        three_element = Possible_Solutions[v][0][3]
+        four_element = Possible_Solutions[v][0][4]
+        five_element = Possible_Solutions[v][1][0]
+        six_element = Possible_Solutions[v][1][1]
+        seven_element = Possible_Solutions[v][1][2]
+        eight_element = Possible_Solutions[v][1][3]
+        nine_element = Possible_Solutions[v][1][4]
+        ten_element = Possible_Solutions[v][2][0]
+        eleven_element = Possible_Solutions[v][2][1]
+        twelve_element = Possible_Solutions[v][2][2]
+        thirteen_element = Possible_Solutions[v][2][3]
+        fourteen_element = Possible_Solutions[v][2][4]
+        fifteen_element = Possible_Solutions[v][3][0]
+        sixteen_element = Possible_Solutions[v][3][1]
+        seventeen_element = Possible_Solutions[v][3][2]
+        eighteen_element = Possible_Solutions[v][3][3]
+        nineteen_element = Possible_Solutions[v][3][4]
+        twenty_element = Possible_Solutions[v][4][0]
+        twentyone_element = Possible_Solutions[v][4][1]
+        twentytwo_element = Possible_Solutions[v][4][2]
+        twentythree_element = Possible_Solutions[v][4][3]
+        twentyfour_element = Possible_Solutions[v][4][4]
+        if zero_element == 1 and one_element == 1 and two_element == 1 and three_element == 1 and four_element == 1 \
+                and five_element == 1 and six_element == 1 and seven_element == 1 and eight_element == 1 \
+                and nine_element == 1 and ten_element == 1 and eleven_element == 1 and twelve_element == 1 \
+                and thirteen_element == 1 and fourteen_element == 1 and fifteen_element == 1 and sixteen_element == 1 \
+                and seventeen_element == 1 and eighteen_element == 1 and nineteen_element == 1 and twenty_element == 1 \
+                and twentyone_element == 1 and twentytwo_element == 1 and twentythree_element == 1 \
+                and twentyfour_element == 1:  # all solutions look like a matrix of ones
+            True_Solutions.append(Possible_Solutions[v])
+    print("The number of unique solutions is ", len(True_Solutions))
+
+
+if choice == '1':
+    rot_piece() #To ensure that the right number of solutions if found. We divided the program back into
+    # its choices for the solution
+    shift_piece_up()
+    shift_piece_down()
+    shift_piece_right()
+    shift_piece_left() #All the functions are called here
+    check_duplicate_configurations(0)
+    check_duplicate_configurations(1)
+    check_duplicate_configurations(2)
+    check_duplicate_configurations(3)
+    add_pieces()
+    three_find_solutions()  #Finds the solutions for the 3x3 matrix
+if choice == '2':
+    rot_piece()
+    shift_piece_up()
+    shift_piece_down()
+    shift_piece_right()
+    shift_piece_left()  #All the functions are called here
+    check_duplicate_configurations(0)
+    check_duplicate_configurations(1)
+    check_duplicate_configurations(2)
+    check_duplicate_configurations(3)
+    add_pieces()
+    four_find_solutions() #Fidns the solutions for a 4x4 matrix
+if choice == '3':
+    rot_piece()
+    shift_piece_up()
+    shift_piece_down()
+    shift_piece_right()
+    shift_piece_left()  #All the functions are called here
+    check_duplicate_configurations(0)
+    check_duplicate_configurations(1)
+    check_duplicate_configurations(2)
+    check_duplicate_configurations(3)
+    add_pieces()
+    five_find_solutions() #Finds solutions for a 5x5 matrix
+
+
